@@ -1,0 +1,40 @@
+# samplanサンプルプログラム
+var hoge int := 10;
+var piyo real := 20;
+var result := (hoge + piyo * 2) / 3 - (2 + 1);
+
+var str string := "なんとか";
+
+print("result.." + result);
+
+function add(a real, b real) real {
+  return a + b;
+}
+
+print("add(3, 2).." + add(3, 2));
+
+function add2(a real, b real) {
+  print("result.." + (a + b));
+}
+
+add2(3, 2);
+
+if hoge > piyo {
+  print("ここは通らない");
+} else {
+  print("ここが通る");
+}
+
+if hoge > piyo {
+  print("ここは通らない");
+} elsif  3 < 5 {
+  print("ここが通る");
+} else {
+  print("ここは通らない");
+}
+
+var i = 0;
+while i < 10 {
+  print("i.." + i);
+  ++i;
+}
