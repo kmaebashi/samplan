@@ -33,7 +33,7 @@ if hoge > piyo {
   print("ここは通らない");
 }
 
-var i = 0;
+var i := 0;
 while i < 10 {
   print("i.." + i);
   ++i;
