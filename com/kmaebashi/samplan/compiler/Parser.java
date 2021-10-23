@@ -4,29 +4,29 @@ import com.kmaebashi.samplan.util.*;
 import com.kmaebashi.samplan.svm.*;
 
 public class Parser {
-    ArrayList<Statement> topLevel = new ArrayList<Statement>();
-    ArrayList<FunctionDefinition> functionList = new ArrayList<FunctionDefinition>();
-
     Token lookAheadToken;
     boolean lookingAhead = false;
     LexicalAnalyzer lexer;
 
     Block currentBlock = null;
 
-    public void parse() throws Exception {
+    public ArrayList<Declaration> parse() throws Exception {
+        var declarationList = new ArrayList<Declaration>();
+
         for (;;) {
             Token token = getToken();
             if (token.type == TokenType.END_OF_FILE) {
                 break;
             } else if (token.type == TokenType.FUNCTION) {
-                FunctionDefinition fd = parseFunctionDefinition();
-                this.functionList.add(fd);
+                FunctionDefinition fd = parseFunctionDefinition(token.lineNumber);
+                declarationList.add(fd);
             } else {
                 ungetToken(token);
                 Statement statement = parseStatement();
-                this.topLevel.add(statement);
+                declarationList.add(statement);
             }
         }
+        return declarationList;
     }
 
     private Token getToken() throws Exception {
@@ -43,7 +43,7 @@ public class Parser {
         lookingAhead = true;
     }
 
-    private FunctionDefinition parseFunctionDefinition() throws Exception {
+    private FunctionDefinition parseFunctionDefinition(int lineNumber) throws Exception {
         String name = parseIdentifier();
         ArrayList<Parameter> parameterList = parseParameterList();
 
@@ -60,7 +60,7 @@ public class Parser {
         }
         Block block = parseBlock();
 
-        return new FunctionDefinition(name, parameterList, type, block);
+        return new FunctionDefinition(lineNumber, name, parameterList, type, block);
     }
 
     private void checkToken(Token token, TokenType expected) {

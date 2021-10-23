@@ -1,6 +1,6 @@
 package com.kmaebashi.samplan.compiler;
 
-abstract class Statement {
+abstract class Statement extends Declaration {
     int lineNumber;
 
     Statement(int lineNumber) {
