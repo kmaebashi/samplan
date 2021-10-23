@@ -1,6 +1,6 @@
 # samplanサンプルプログラム
 var hoge int := 10;
-var piyo real := 20;
+var piyo real := 20.123;
 var result := (hoge + piyo * 2) / 3 - (2 + 1);
 
 var str string := "なんとか";
