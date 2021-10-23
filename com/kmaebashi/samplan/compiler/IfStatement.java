@@ -7,8 +7,10 @@ class IfStatement extends Statement {
     ArrayList<ElsIfClause> elsIfClause;
     Block elseBlock;
 
-    IfStatement(Expression condition, Block block, ArrayList<ElsIfClause> elsIfClause,
+    IfStatement(int lineNumber, Expression condition, Block block,
+                ArrayList<ElsIfClause> elsIfClause,
                 Block elseBlock) {
+        super(lineNumber);
         this.condition = condition;
         this.block = block;
         this.elsIfClause = elsIfClause;

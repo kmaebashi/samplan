@@ -161,21 +161,21 @@ public class Parser {
         Statement statement;
 
         if (token.type == TokenType.VAR) {
-            statement = parseVariableDeclaration();
+            statement = parseVariableDeclaration(token.lineNumber);
         } else if (token.type == TokenType.IF) {
-            statement = parseIfStatement();
+            statement = parseIfStatement(token.lineNumber);
         } else if (token.type == TokenType.WHILE) {
-            statement = parseWhileStatement();
+            statement = parseWhileStatement(token.lineNumber);
         } else if (token.type == TokenType.RETURN) {
-            statement = parseReturnStatement();
+            statement = parseReturnStatement(token.lineNumber);
         } else {
             ungetToken(token);
-            statement = parseExpressionStatement();
+            statement = parseExpressionStatement(token.lineNumber);
         }
         return statement;
     }
 
-    private VariableDeclaration parseVariableDeclaration() throws Exception {
+    private VariableDeclaration parseVariableDeclaration(int lineNumber) throws Exception {
         String name = parseIdentifier();
         SvmType type = parseType();
         Expression initializer = null;
@@ -187,10 +187,10 @@ public class Parser {
         }
         checkToken(token, TokenType.SEMICOLON);
 
-        return new VariableDeclaration(name, type, initializer);
+        return new VariableDeclaration(lineNumber, name, type, initializer);
     }
     
-    private IfStatement parseIfStatement() throws Exception {
+    private IfStatement parseIfStatement(int lineNumber) throws Exception {
         Expression condition = parseExpression();
         Block block = parseBlock();
         Token token;
@@ -212,17 +212,17 @@ public class Parser {
         } else {
             ungetToken(token);
         }
-        return new IfStatement(condition, block, elsIfClauseList, elseBlock);
+        return new IfStatement(lineNumber, condition, block, elsIfClauseList, elseBlock);
     }
 
-    private WhileStatement parseWhileStatement() throws Exception {
+    private WhileStatement parseWhileStatement(int lineNumber) throws Exception {
         Expression condition = parseExpression();
         Block block = parseBlock();
 
-        return new WhileStatement(condition, block);
+        return new WhileStatement(lineNumber, condition, block);
     }
 
-    private ReturnStatement parseReturnStatement() throws Exception {
+    private ReturnStatement parseReturnStatement(int lineNumber) throws Exception {
         Token token = getToken();
         Expression returnValue = null;
 
@@ -233,16 +233,16 @@ public class Parser {
             checkToken(token, TokenType.SEMICOLON);
         }
 
-        return new ReturnStatement(returnValue);
+        return new ReturnStatement(lineNumber, returnValue);
     }
 
     
-    private ExpressionStatement parseExpressionStatement() throws Exception {
+    private ExpressionStatement parseExpressionStatement(int lineNumber) throws Exception {
         Expression expr = parseExpression();
         Token token = getToken();
         checkToken(token, TokenType.SEMICOLON);
 
-        return new ExpressionStatement(expr);
+        return new ExpressionStatement(lineNumber, expr);
     }
 
     private Expression parseExpression() throws Exception {
@@ -255,7 +255,8 @@ public class Parser {
         Token token = getToken();
         if (token.type == TokenType.ASSIGNMENT) {
             Expression right = parseAssignmentExpression();
-            return new BinaryExpression(BinaryExpressionKind.ASSIGNMENT,
+            return new BinaryExpression(token.lineNumber,
+                                        BinaryExpressionKind.ASSIGNMENT,
                                         left, right);
         } else {
             ungetToken(token);
@@ -278,7 +279,7 @@ public class Parser {
                 break;
             }
             Expression right = parseCompareExpression();
-            BinaryExpression expr = new BinaryExpression(kind, left, right);
+            BinaryExpression expr = new BinaryExpression(token.lineNumber, kind, left, right);
             left = expr;
         }
 
@@ -308,7 +309,7 @@ public class Parser {
                 break;
             }
             Expression right = parseAdditiveExpression();
-            BinaryExpression expr = new BinaryExpression(kind, left, right);
+            BinaryExpression expr = new BinaryExpression(token.lineNumber, kind, left, right);
             left = expr;
         }
 
@@ -330,7 +331,7 @@ public class Parser {
                 break;
             }
             Expression right = parseMultiplicativeExpression();
-            BinaryExpression expr = new BinaryExpression(kind, left, right);
+            BinaryExpression expr = new BinaryExpression(token.lineNumber, kind, left, right);
             left = expr;
         }
 
@@ -352,7 +353,7 @@ public class Parser {
                 break;
             }
             Expression right = parseUnaryExpression();
-            BinaryExpression expr = new BinaryExpression(kind, left, right);
+            BinaryExpression expr = new BinaryExpression(token.lineNumber, kind, left, right);
             left = expr;
         }
 
@@ -366,15 +367,15 @@ public class Parser {
 
         if (token.type == TokenType.MINUS) {
             Expression operand = parseUnaryExpression();
-            expr = new UnaryExpression(UnaryExpressionKind.MINUS, operand);
+            expr = new UnaryExpression(token.lineNumber, UnaryExpressionKind.MINUS, operand);
 
         } else if (token.type == TokenType.INCREMENT) {
             Expression operand = parsePrimaryExpression();
-            expr = new UnaryExpression(UnaryExpressionKind.INCREMENT, operand);
+            expr = new UnaryExpression(token.lineNumber, UnaryExpressionKind.INCREMENT, operand);
 
         } else if (token.type == TokenType.DECREMENT) {
             Expression operand = parsePrimaryExpression();
-            expr = new UnaryExpression(UnaryExpressionKind.DECREMENT, operand);
+            expr = new UnaryExpression(token.lineNumber, UnaryExpressionKind.DECREMENT, operand);
 
         } else {
             ungetToken(token);
@@ -388,21 +389,21 @@ public class Parser {
         Expression expr = null;
         
         if (token.type == TokenType.TRUE) {
-            expr = new BooleanLiteral(true);
+            expr = new BooleanLiteral(token.lineNumber, true);
         } else if (token.type == TokenType.FALSE) {
-            expr = new BooleanLiteral(false);
+            expr = new BooleanLiteral(token.lineNumber, false);
         } else if (token.type == TokenType.INT_VALUE) {
-            expr = new IntLiteral(token.intValue);
+            expr = new IntLiteral(token.lineNumber, token.intValue);
         } else if (token.type == TokenType.REAL_VALUE) {
-            expr = new RealLiteral(token.realValue);
+            expr = new RealLiteral(token.lineNumber, token.realValue);
         } else if (token.type == TokenType.STRING_VALUE) {
-            expr = new StringLiteral(token.tokenString);
+            expr = new StringLiteral(token.lineNumber, token.tokenString);
         } else if (token.type == TokenType.LEFT_PAREN) {
             expr = parseExpression();
             token = getToken();
             checkToken(token, TokenType.RIGHT_PAREN);
         } else if (token.type == TokenType.IDENTIFIER) {
-            expr = parseStartsWithIdentifierExpression(token.tokenString);
+            expr = parseStartsWithIdentifierExpression(token);
         } else {
             System.err.println("primaryExpression:token.type.." + token.type + ", " + token.lineNumber);
             ErrorWriter.write(token.lineNumber, ErrorMessage.UNEXPECTED_TOKEN,
@@ -412,14 +413,16 @@ public class Parser {
         return expr;
     }
 
-    private Expression parseStartsWithIdentifierExpression(String name) throws Exception {
+    private Expression parseStartsWithIdentifierExpression(Token identifierToken) throws Exception {
         Token token = getToken();
         if (token.type == TokenType.LEFT_PAREN) {
             ArrayList<Expression> argumentList = parseArgumentList();
-            return new FunctionCallExpression(name, argumentList);
+            return new FunctionCallExpression(identifierToken.lineNumber,
+                                              identifierToken.tokenString, argumentList);
         } else {
             ungetToken(token);
-            return new IdentifierExpression(name);
+            return new IdentifierExpression(identifierToken.lineNumber,
+                                            identifierToken.tokenString);
         }
     }
 

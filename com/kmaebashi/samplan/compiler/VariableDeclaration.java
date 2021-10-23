@@ -6,7 +6,8 @@ class VariableDeclaration extends Statement {
     SvmType type;
     Expression initializer;
 
-    VariableDeclaration(String name, SvmType type, Expression initializer) {
+    VariableDeclaration(int lineNumber, String name, SvmType type, Expression initializer) {
+        super(lineNumber);
         this.name = name;
         this.type = type;
         this.initializer = initializer;
