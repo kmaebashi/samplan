@@ -33,6 +33,7 @@ public class LexicalAnalyzer {
             put("(", TokenType.LEFT_PAREN);
             put(")", TokenType.RIGHT_PAREN);
             put("=", TokenType.EQUAL);
+            put("!=", TokenType.NOT_EQUAL);
             put(":=", TokenType.ASSIGNMENT);
             put("<", TokenType.GREATER_THAN);
             put("<=", TokenType.GREATER_EQUAL);
@@ -41,7 +42,7 @@ public class LexicalAnalyzer {
             put("&&", TokenType.LOGICAL_AND);
             put("||", TokenType.LOGICAL_OR);
             put("++", TokenType.INCREMENT);
-            put("--", TokenType.DECLREMENT);
+            put("--", TokenType.DECREMENT);
             put(",", TokenType.COMMA);
             put(";", TokenType.SEMICOLON);
         }
@@ -107,7 +108,8 @@ public class LexicalAnalyzer {
                     tokenType = TokenType.END_OF_FILE;
                     break getCFor;
                 } else {
-                    ErrorWriter.write(ErrorMessage.INVALID_CHARACTER);
+                    ErrorWriter.write(this.currentLineNumber, ErrorMessage.INVALID_CHARACTER,
+                                      new String(Character.toChars(ch)));
                 }
                 break;
             case COMMENT:
@@ -136,7 +138,8 @@ public class LexicalAnalyzer {
                     currentToken = addLetterToToken(currentToken, ch);
                     currentStatus = Status.AFTER_DECIMAL_POINT;
                 } else {
-                    ErrorWriter.write(ErrorMessage.INVALID_CHARACTER);
+                    ErrorWriter.write(this.currentLineNumber, ErrorMessage.INVALID_CHARACTER,
+                                      new String(Character.toChars(ch)));
                 }
                 break;
             case AFTER_DECIMAL_POINT:
@@ -177,7 +180,9 @@ public class LexicalAnalyzer {
                 } else if (ch == '\"' || ch == '\\'){
                     currentToken = addLetterToToken(currentToken, ch);
                 } else {
-                    ErrorWriter.write(ErrorMessage.INVALID_ESCAPE_CHARACTER_IN_STRING);
+                    ErrorWriter.write(this.currentLineNumber,
+                                      ErrorMessage.INVALID_ESCAPE_CHARACTER_IN_STRING,
+                                      new String(Character.toChars(ch)));
                 }
                 break;
             case OPERATOR:
@@ -190,28 +195,21 @@ public class LexicalAnalyzer {
                 }
                 break;
             default:
-                ErrorWriter.write(ErrorMessage.INVALID_CHARACTER);
+                ErrorWriter.write(this.currentLineNumber, ErrorMessage.INVALID_CHARACTER,
+                                  new String(Character.toChars(ch)));
             }
         }
         Token ret = null;
         if (tokenType == TokenType.INT_VALUE) {
-            try {
-                int intValue = Integer.parseInt(currentToken);
-                ret = new Token(tokenType, currentToken, intValue,
-                                this.currentLineNumber, this.currentColumn);
-            } catch (NumberFormatException ex) {
-                ErrorWriter.write(ErrorMessage.INTEGER_PARSE, currentToken);
-            }
+            int intValue = Integer.parseInt(currentToken);
+            ret = new Token(tokenType, currentToken, intValue,
+                            this.currentLineNumber, this.currentColumn);
         } else if (tokenType == TokenType.REAL_VALUE) {
-            try {
-                double doubleValue = Double.parseDouble(currentToken);
-                ret = new Token(tokenType, currentToken, doubleValue,
-                                this.currentLineNumber, this.currentColumn);
-            } catch (NumberFormatException ex) {
-                ErrorWriter.write(ErrorMessage.DOUBLE_PARSE, currentToken);
-            }
+            double doubleValue = Double.parseDouble(currentToken);
+            ret = new Token(tokenType, currentToken, doubleValue,
+                            this.currentLineNumber, this.currentColumn);
         } else if (tokenType == TokenType.STRING_VALUE) {
-            ret = new Token(tokenType, currentToken, currentToken,
+            ret = new Token(tokenType, currentToken,
                             this.currentLineNumber, this.currentColumn);
         } else {
             ret = new Token(tokenType, currentToken,
@@ -260,7 +258,7 @@ public class LexicalAnalyzer {
     public static void main(String[] args) throws Exception {
         if (args.length < 1) {
             System.err.println("ソースファイル名を指定してください。");
-            return;
+            System.exit(1);
         }
         LexicalAnalyzer lexer = new LexicalAnalyzer(args[0]);
 
@@ -271,7 +269,7 @@ public class LexicalAnalyzer {
             }
             System.out.println("" + token.type + ", " + token.tokenString + ", "
                                + token.intValue + ", " + token.realValue + ", "
-                               + token.stringValue + ", " + token.lineNumber);
+                               + ", " + token.lineNumber);
         }
     }
 }

@@ -5,7 +5,6 @@ class Token {
     String tokenString;
     int intValue;
     double realValue;
-    String stringValue;
     int lineNumber;
     int column;
 
@@ -24,10 +23,5 @@ class Token {
     Token(TokenType type, String tokenString, double realValue, int lineNumber, int column) {
         this(type, tokenString, lineNumber, column);
         this.realValue = realValue;
-    }
-
-    Token(TokenType type, String tokenString, String stringValue, int lineNumber, int column) {
-        this(type, tokenString, lineNumber, column);
-        this.stringValue = stringValue;
     }
 }

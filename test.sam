@@ -1,7 +1,7 @@
 # samplanサンプルプログラム
-var hoge int := 10;
-var piyo real := 20.123;
-var result := (hoge + piyo * 2) / 3 - (2 + 1);
+# var hoge int := 10 + 5;
+# var piyo real := 20.123;
+var result real := (hoge + piyo * 2) / 3 - (2 + 1);
 
 var str string := "なんとか";
 
@@ -33,7 +33,7 @@ if hoge > piyo {
   print("ここは通らない");
 }
 
-var i := 0;
+var i int:= 0;
 while i < 10 {
   print("i.." + i);
   ++i;
