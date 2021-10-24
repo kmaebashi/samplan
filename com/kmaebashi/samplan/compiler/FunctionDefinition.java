@@ -8,6 +8,10 @@ class FunctionDefinition extends Declaration {
     ArrayList<Parameter> parameterList;
     SvmType type;
     Block block;
+    int functionId;
+    ArrayList<VariableDeclaration> localVariableList
+                                      = new ArrayList<VariableDeclaration>();
+    boolean isNative = false;
 
     FunctionDefinition(int lineNumber, String name, ArrayList<Parameter> parameterList,
                        SvmType type, Block block) {

@@ -5,6 +5,8 @@ class VariableDeclaration extends Statement {
     String name;
     SvmType type;
     Expression initializer;
+    boolean isGlobal;
+    int id;
 
     VariableDeclaration(int lineNumber, String name, SvmType type, Expression initializer) {
         super(lineNumber);

@@ -4,9 +4,9 @@ import com.kmaebashi.samplan.util.*;
 import com.kmaebashi.samplan.svm.*;
 
 public class Parser {
-    Token lookAheadToken;
-    boolean lookingAhead = false;
-    LexicalAnalyzer lexer;
+    private Token lookAheadToken;
+    private boolean lookingAhead = false;
+    private LexicalAnalyzer lexer;
 
     Block currentBlock = null;
 
@@ -107,10 +107,18 @@ public class Parser {
     private ArrayList<Parameter> parseParameterList() throws Exception {
         Token token = getToken();
         checkToken(token, TokenType.LEFT_PAREN);
+        var paramList = new ArrayList<Parameter>();
 
         for (;;) {
+            token = getToken();
+            if (token.type == TokenType.RIGHT_PAREN) {
+                break;
+            }
+            ungetToken(token);
             String name = parseIdentifier();
             SvmType type = parseType();
+            Parameter param = new Parameter(token.lineNumber, name, type);
+            paramList.add(param);
 
             token = getToken();
             if (token.type != TokenType.COMMA) {
@@ -119,7 +127,7 @@ public class Parser {
         }
         checkToken(token, TokenType.RIGHT_PAREN);
 
-        return null;
+        return paramList;
     }
 
     private SvmType parseType() throws Exception {
@@ -405,7 +413,6 @@ public class Parser {
         } else if (token.type == TokenType.IDENTIFIER) {
             expr = parseStartsWithIdentifierExpression(token);
         } else {
-            System.err.println("primaryExpression:token.type.." + token.type + ", " + token.lineNumber);
             ErrorWriter.write(token.lineNumber, ErrorMessage.UNEXPECTED_TOKEN,
                               "primary expression", token.tokenString);
         }
@@ -454,6 +461,8 @@ public class Parser {
         }
         LexicalAnalyzer lexer = new LexicalAnalyzer(args[0]);
         Parser parser = new Parser(lexer);
-        parser.parse();
+        var declarationList = parser.parse();
+        var fixer = new TreeFixer();
+        fixer.fix(declarationList);
     }
 }
