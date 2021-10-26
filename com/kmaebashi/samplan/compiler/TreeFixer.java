@@ -8,8 +8,6 @@ public class TreeFixer {
                               = new HashMap<String, FunctionDefinition>();
     private HashMap<String, VariableDeclaration> globalVariableMap
                               = new HashMap<String, VariableDeclaration>();
-    private int currentFunctionId = 1;
-    private int currentGlobalVariableId = 0;
     private FunctionDefinition currentFunction;
 
     public TreeFixer() {
@@ -19,16 +17,13 @@ public class TreeFixer {
                                                        SvmType.VOID, null);
         fd.isNative = true;
         this.functionMap.put(fd.name, fd);
-
-        this.currentFunctionId = this.functionMap.size();
     }
 
     public void fix(ArrayList<Declaration> declarationList) {
         registerFunctions(declarationList);
 
         for (var decl : declarationList) {
-            if (decl instanceof FunctionDefinition) {
-                FunctionDefinition fd = (FunctionDefinition)decl;
+            if (decl instanceof FunctionDefinition fd) {
                 fixFunctionDefinition(fd);
             } else {
                 Statement statement = (Statement)decl;
@@ -50,13 +45,14 @@ public class TreeFixer {
     }
 
     private void fixFunctionDefinition(FunctionDefinition fd) {
-        fd.functionId = this.currentFunctionId;
+        fd.functionId = this.functionMap.size();
+
         this.currentFunction = fd;
         for (var param: fd.parameterList) {
             var vd = new VariableDeclaration(param.lineNumber, param.name, param.type, null);
+            vd.isParameter = true;
             addLocalVariable(fd.block, vd);
         }
-
         fixBlock(fd.block);
 
         this.currentFunction = null;
@@ -73,6 +69,8 @@ public class TreeFixer {
             fixReturnStatement(currentBlock, rs);
         } else if (statement instanceof ExpressionStatement es) {
             es.expression = fixExpression(currentBlock, es.expression);
+        } else {
+            assert false;
         }
     }
 
@@ -100,6 +98,7 @@ public class TreeFixer {
         if (is.condition.type != SvmType.BOOLEAN) {
             ErrorWriter.write(is.lineNumber, ErrorMessage.TYPE_MISMATCH_BOOLEAN);
         }
+        fixBlock(is.block);
         for (var eic : is.elsIfClause) {
             eic.condition = fixExpression(currentBlock, eic.condition);
             if (eic.condition.type != SvmType.BOOLEAN) {
@@ -420,7 +419,6 @@ public class TreeFixer {
         }
     }
 
-    
     private Expression fixCompareExpression(Block currentBlock, BinaryExpression be) {
         be.left = fixExpression(currentBlock, be.left);
         be.right = fixExpression(currentBlock, be.right);
@@ -469,6 +467,10 @@ public class TreeFixer {
         }
         if (destType == SvmType.REAL && src.type == SvmType.INT) {
             return new UnaryExpression(src.lineNumber, UnaryExpressionKind.CAST_INT_TO_REAL,
+                                       src);
+        }
+        if (destType == SvmType.INT && src.type == SvmType.REAL) {
+            return new UnaryExpression(src.lineNumber, UnaryExpressionKind.CAST_REAL_TO_INT,
                                        src);
         }
         return src;

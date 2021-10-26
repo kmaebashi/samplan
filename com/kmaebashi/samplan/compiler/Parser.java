@@ -134,7 +134,6 @@ public class Parser {
         Token token = getToken();
 
         if (!isTypeSpecifierToken(token.type)) {
-            System.err.println("parseType:" + token.type + ", " + token.lineNumber);
             ErrorWriter.write(token.lineNumber, ErrorMessage.TYPE_EXPECTED,
                               token.tokenString);
         }
@@ -464,5 +463,8 @@ public class Parser {
         var declarationList = parser.parse();
         var fixer = new TreeFixer();
         fixer.fix(declarationList);
+
+        Generator generator = new Generator();
+        generator.generate(declarationList);
     }
 }

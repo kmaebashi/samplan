@@ -6,6 +6,7 @@ class VariableDeclaration extends Statement {
     SvmType type;
     Expression initializer;
     boolean isGlobal;
+    boolean isParameter = false;
     int id;
 
     VariableDeclaration(int lineNumber, String name, SvmType type, Expression initializer) {
