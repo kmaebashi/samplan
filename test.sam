@@ -1,11 +1,17 @@
 # samplanサンプルプログラム
 var hoge int := 10 + 5;
+print("hoge.." + hoge);
 var piyo real := 20.123;
+print("piyo.." + piyo);
+print("piyo * 2.." + (piyo * 2));
+print("hoge + piyo * 2.." + (hoge + piyo * 2));
 var result real := (hoge + piyo * 2) / 3 - (2 + 1);
 
 var str string := "なんとか";
 
 print("result.." + result);
+
+var addResult real := add(0.1, 0.2);
 
 function add(a real, b real) real {
   return a + b;

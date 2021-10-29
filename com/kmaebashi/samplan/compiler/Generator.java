@@ -13,16 +13,29 @@ public class Generator {
 
     public SvmExecutable generate(ArrayList<Declaration> declarationList) {
         var opCodeBuf = new OpCodeBuffer();
+        int globalVariableCount = 0;
 
         for (var decl : declarationList) {
             if (decl instanceof FunctionDefinition fd) {
                 generateFunctionDefinition(fd);
             } else {
                 Statement statement = (Statement)decl;
+                if (decl instanceof VariableDeclaration) {
+                    globalVariableCount++;
+                }
                 generateStatement(opCodeBuf, statement);
             }
         }
-        SvmExecutable executable = new SvmExecutable();
+        fixLabels(opCodeBuf);
+
+        SvmExecutable executable
+            = new SvmExecutable(Util.arrayListToArrayDouble(this.realConstantPool),
+                                this.stringConstantPool.toArray(new String[0]),
+                                globalVariableCount,
+                                this.functionList.toArray(new SvmFunction[0]),
+                                opCodeBuf.getOpCode());
+
+        executable.dump();
 
         return executable;
     }
@@ -31,6 +44,13 @@ public class Generator {
         var opCodeBuf = new OpCodeBuffer();
 
         generateBlock(opCodeBuf, fd.block);
+        fixLabels(opCodeBuf);
+
+        SvmFunction func = new SvmFunction(fd.name, fd.parameterList.size(),
+                                           fd.localVariableList.size()
+                                           - fd.parameterList.size(),
+                                           opCodeBuf.getOpCode());
+        this.functionList.add(func);
     }
 
     private void generateBlock(OpCodeBuffer buf, Block block) {
@@ -49,8 +69,10 @@ public class Generator {
             generateIfStatement(buf, is);
 
         } else if (statement instanceof WhileStatement ws) {
+            generateWhileStatement(buf, ws);
 
         } else if (statement instanceof ReturnStatement rs) {
+            generateReturnStatement(buf, rs);
 
         } else if (statement instanceof ExpressionStatement es) {
             generateExpressionStatement(buf, es);
@@ -153,7 +175,7 @@ public class Generator {
             if (declaration.isParameter) {
                 id = declaration.id;
             } else {
-                id = declaration.id + SvmConstant.RETURN_ADDRESS_SIZE;
+                id = declaration.id + SvmConstant.RETURN_INFO_SIZE;
             }
             if (declaration.type == SvmType.INT) {
                 buf.generateCode(SvmOpCode.POP_STACK_INT, id);
@@ -181,7 +203,7 @@ public class Generator {
             if (ie.declaration.isParameter) {
                 id = ie.declaration.id;
             } else {
-                id = ie.declaration.id + SvmConstant.RETURN_ADDRESS_SIZE;
+                id = ie.declaration.id + SvmConstant.RETURN_INFO_SIZE;
             }
             if (ie.declaration.type == SvmType.INT) {
                 buf.generateCode(SvmOpCode.PUSH_STATIC_INT, id);
@@ -276,62 +298,62 @@ public class Generator {
             generateAssignmentExpression(buf, be, true);
             break;
         case EQUAL:
-            if (be.type == SvmType.INT) {
+            if (be.left.type == SvmType.INT) {
                 buf.generateCode(SvmOpCode.EQ_INT);
-            } else if (be.type == SvmType.REAL) {
+            } else if (be.left.type == SvmType.REAL) {
                 buf.generateCode(SvmOpCode.EQ_REAL);
             } else {
-                assert be.type == SvmType.STRING;
+                assert be.left.type == SvmType.STRING;
                 buf.generateCode(SvmOpCode.EQ_STRING);
             }
             break;
         case NOT_EQUAL:
-            if (be.type == SvmType.INT) {
+            if (be.left.type == SvmType.INT) {
                 buf.generateCode(SvmOpCode.NE_INT);
-            } else if (be.type == SvmType.REAL) {
+            } else if (be.left.type == SvmType.REAL) {
                 buf.generateCode(SvmOpCode.NE_REAL);
             } else {
-                assert be.type == SvmType.STRING;
+                assert be.left.type == SvmType.STRING;
                 buf.generateCode(SvmOpCode.NE_STRING);
             }
             break;
         case GREATER_THAN:
-            if (be.type == SvmType.INT) {
+            if (be.left.type == SvmType.INT) {
                 buf.generateCode(SvmOpCode.GT_INT);
-            } else if (be.type == SvmType.REAL) {
+            } else if (be.left.type == SvmType.REAL) {
                 buf.generateCode(SvmOpCode.GT_REAL);
             } else {
-                assert be.type == SvmType.STRING;
+                assert be.left.type == SvmType.STRING;
                 buf.generateCode(SvmOpCode.GT_STRING);
             }
             break;
         case GREATER_EQUAL:
-            if (be.type == SvmType.INT) {
+            if (be.left.type == SvmType.INT) {
                 buf.generateCode(SvmOpCode.GE_INT);
-            } else if (be.type == SvmType.REAL) {
+            } else if (be.left.type == SvmType.REAL) {
                 buf.generateCode(SvmOpCode.GE_REAL);
             } else {
-                assert be.type == SvmType.STRING;
+                assert be.left.type == SvmType.STRING;
                 buf.generateCode(SvmOpCode.GE_STRING);
             }
             break;
         case LESS_THAN:
-            if (be.type == SvmType.INT) {
+            if (be.left.type == SvmType.INT) {
                 buf.generateCode(SvmOpCode.LT_INT);
-            } else if (be.type == SvmType.REAL) {
+            } else if (be.left.type == SvmType.REAL) {
                 buf.generateCode(SvmOpCode.LT_REAL);
             } else {
-                assert be.type == SvmType.STRING;
+                assert be.left.type == SvmType.STRING : be.type;
                 buf.generateCode(SvmOpCode.LT_STRING);
             }
             break;
         case LESS_EQUAL:
-            if (be.type == SvmType.INT) {
+            if (be.left.type == SvmType.INT) {
                 buf.generateCode(SvmOpCode.LE_INT);
-            } else if (be.type == SvmType.REAL) {
+            } else if (be.left.type == SvmType.REAL) {
                 buf.generateCode(SvmOpCode.LE_REAL);
             } else {
-                assert be.type == SvmType.STRING;
+                assert be.left.type == SvmType.STRING;
                 buf.generateCode(SvmOpCode.LE_STRING);
             }
             break;
@@ -386,5 +408,25 @@ public class Generator {
         generateBlock(buf, ws.block);
 
         buf.setLabel(endLabel);
+    }
+
+    private void generateReturnStatement(OpCodeBuffer buf, ReturnStatement rs) {
+        generateExpression(buf, rs.returnValue);
+
+        buf.generateCode(SvmOpCode.RETURN);
+    }
+
+    private void fixLabels(OpCodeBuffer buf) {
+        SvmOpCode[] codes = SvmOpCode.values();
+
+        for (int i = 0; i < buf.buf.size(); i++) {
+            if (buf.buf.get(i) == SvmOpCode.JUMP.ordinal()
+                || buf.buf.get(i) == SvmOpCode.JUMP_IF_TRUE.ordinal()
+                || buf.buf.get(i) == SvmOpCode.JUMP_IF_FALSE.ordinal()) {
+                int label = buf.buf.get(i + 1);
+                buf.buf.set(i + 1, buf.labelTable.get(label));
+            }
+            i += codes[buf.buf.get(i)].getOperandCount();
+        }
     }
 }

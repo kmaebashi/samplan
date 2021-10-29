@@ -15,7 +15,7 @@ public class ErrorWriter {
             put(ErrorMessage.TYPE_MISMATCH_BOOLEAN, "boolean型が期待されています。");
             put(ErrorMessage.INC_DEC_NOT_LVALUE, "インクリメント・デクリメント演算子の対象は左辺値でなければいけません。");
             put(ErrorMessage.INC_DEC_NOT_INT, "インクリメント・デクリメント演算子の対象は整数型でなければいけません。");
-            put(ErrorMessage.TYPE_MISMATCH_MATH, "型の不一致エラー。");
+            put(ErrorMessage.TYPE_MISMATCH, "型の不一致エラー。");
             put(ErrorMessage.ASSIGN_NOT_LVALUE, "代入の対象は左辺値でなければいけません。");
             put(ErrorMessage.RETURN_OUT_OF_FUNCTION, "関数の外にreturnは書けません。");
             put(ErrorMessage.FUNCTION_DUPLICATION, "関数名が重複しています:{0}");

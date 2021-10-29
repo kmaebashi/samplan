@@ -449,7 +449,7 @@ public class Parser {
         return ret;
     }
 
-    Parser(LexicalAnalyzer lexer) {
+    public Parser(LexicalAnalyzer lexer) {
         this.lexer = lexer;
     }
 

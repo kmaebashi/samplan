@@ -35,10 +35,10 @@ public class LexicalAnalyzer {
             put("=", TokenType.EQUAL);
             put("!=", TokenType.NOT_EQUAL);
             put(":=", TokenType.ASSIGNMENT);
-            put("<", TokenType.GREATER_THAN);
-            put("<=", TokenType.GREATER_EQUAL);
-            put(">", TokenType.LESS_THAN);
-            put(">=", TokenType.LESS_EQUAL);
+            put(">", TokenType.GREATER_THAN);
+            put(">=", TokenType.GREATER_EQUAL);
+            put("<", TokenType.LESS_THAN);
+            put("<=", TokenType.LESS_EQUAL);
             put("&&", TokenType.LOGICAL_AND);
             put("||", TokenType.LOGICAL_OR);
             put("++", TokenType.INCREMENT);

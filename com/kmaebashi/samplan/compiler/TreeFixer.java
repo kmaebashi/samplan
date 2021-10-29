@@ -39,19 +39,39 @@ public class TreeFixer {
                     ErrorWriter.write(fd.lineNumber, ErrorMessage.FUNCTION_DUPLICATION,
                                       fd.name);
                 }
+                fd.functionId = this.functionMap.size();
                 functionMap.put(fd.name, fd);
             }
         }
     }
 
     private void fixFunctionDefinition(FunctionDefinition fd) {
-        fd.functionId = this.functionMap.size();
-
         this.currentFunction = fd;
         for (var param: fd.parameterList) {
             var vd = new VariableDeclaration(param.lineNumber, param.name, param.type, null);
             vd.isParameter = true;
             addLocalVariable(fd.block, vd);
+        }
+        Statement lastStatement
+                   = fd.block.statementList.get(fd.block.statementList.size() - 1);
+        Expression returnValue = null;
+        if (!(lastStatement instanceof ReturnStatement)) {
+            if (fd.type == SvmType.VOID) {
+                returnValue = null;
+            } else if ( fd.type == SvmType.INT) {
+                returnValue = new IntLiteral(lastStatement.lineNumber, 0);
+
+            } else if (fd.type == SvmType.BOOLEAN) {
+                returnValue = new BooleanLiteral(lastStatement.lineNumber, false);
+
+            } else if (fd.type == SvmType.REAL) {
+                returnValue = new RealLiteral(lastStatement.lineNumber, 0);
+            } else {
+                assert fd.type == SvmType.STRING : fd.type;
+                returnValue = new StringLiteral(lastStatement.lineNumber, "");
+            }
+            fd.block.statementList.add(new ReturnStatement(lastStatement.lineNumber,
+                                                           returnValue));
         }
         fixBlock(fd.block);
 
@@ -122,10 +142,14 @@ public class TreeFixer {
         if (this.currentFunction == null) {
             ErrorWriter.write(rs.lineNumber, ErrorMessage.RETURN_OUT_OF_FUNCTION);
         }
-        rs.returnValue = fixExpression(currentBlock, rs.returnValue);
-        rs.returnValue = castAssignment(rs.returnValue, this.currentFunction.type);
-        if (rs.returnValue.type != this.currentFunction.type) {
-            ErrorWriter.write(rs.lineNumber, ErrorMessage.TYPE_MISMATCH);
+        if (rs.returnValue != null) {
+            rs.returnValue = fixExpression(currentBlock, rs.returnValue);
+            rs.returnValue = castAssignment(rs.returnValue, this.currentFunction.type);
+            if (rs.returnValue.type != this.currentFunction.type) {
+                ErrorWriter.write(rs.lineNumber, ErrorMessage.TYPE_MISMATCH);
+            }
+        } else {
+            rs.returnValue = new IntLiteral(rs.lineNumber, 0);
         }
     }
 
@@ -217,11 +241,12 @@ public class TreeFixer {
         case INCREMENT: // fall through
         case DECREMENT:
             ret = fixIncDecExpression(currentBlock, ue);
+            break;
         case CAST_INT_TO_REAL: // fall through
         case CAST_BOOLEAN_TO_STRING: // fall through
         case CAST_INT_TO_STRING: // fall through
         case CAST_REAL_TO_STRING: // fall through
-            assert false;
+            assert false : ue.kind;
         }
         return ret;
     }
