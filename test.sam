@@ -61,3 +61,75 @@ function sum(value int) int {
 }
 
 print("sum(10).." + sum(10));
+
+var assign1 int;
+var assign2 int;
+var assign3 int;
+
+assign1 := assign2 := assign3 := 123;
+
+print("assign1.." + assign1);
+print("assign2.." + assign2);
+print("assign3.." + assign3);
+
+if 3 = 2 {
+  print("ここは通らない");
+} elsif 3 != 2 {
+  print("ここは通る");
+} elsif 3 > 2 {
+  print("ここは通る");
+} elsif 3 < 2 {
+  print("ここは通らない");
+} elsif 3 >= 2 {
+  print("ここは通る");
+} elsif 3 <= 2 {
+  print("ここは通らない");
+}
+
+print("比較演算子のテスト");
+if 3 = 2.0 {
+  print("ここは通らない");
+}
+if 3.0 != 2.0 {
+  print("ここは通る");
+}
+if 3 > 2.0 {
+  print("ここは通る");
+}
+if 3 < 2.0 {
+  print("ここは通らない");
+}
+if 3.0 >= 2 {
+  print("ここは通る");
+}
+if 3.0 <= 2 {
+  print("ここは通らない");
+}
+
+print("&&のテスト");
+if 3 > 2 && 4 > 3 {
+  print("ここは通る");
+}
+if 3 > 2 && 4 < 3 {
+  print("ここは通らない");
+}
+if 3 < 2 && 4 > 3 {
+  print("ここは通らない");
+}
+if 3 < 2 && 4 < 3 {
+  print("ここは通らない");
+}
+
+print("||のテスト");
+if 3 > 2 || 4 > 3 {
+  print("ここは通る");
+}
+if 3 > 2 || 4 < 3 {
+  print("ここは通らない");
+}
+if 3 < 2 || 4 > 3 {
+  print("ここは通らない");
+}
+if 3 < 2 || 4 < 3 {
+  print("ここは通らない");
+}
