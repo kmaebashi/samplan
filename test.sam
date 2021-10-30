@@ -12,6 +12,7 @@ var str string := "なんとか";
 print("result.." + result);
 
 var addResult real := add(0.1, 0.2);
+print("addResult.." + addResult);
 
 function add(a real, b real) real {
   return a + b;
@@ -23,7 +24,9 @@ function add2(a real, b real) {
   print("result.." + (a + b));
 }
 
-add2(3, 2);
+add2(10, 5);
+
+print("hoge.." + hoge + ", piyo.." + piyo);
 
 if hoge > piyo {
   print("ここは通らない");
@@ -44,3 +47,17 @@ while i < 10 {
   print("i.." + i);
   ++i;
 }
+
+function sum(value int) int {
+  var i2 int := 0;
+  var sum int := 0;
+
+  while (i2 <= value) {
+    sum := sum + i2;
+    ++i2;
+  }
+
+  return sum;
+}
+
+print("sum(10).." + sum(10));

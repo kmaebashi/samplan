@@ -45,7 +45,6 @@ public class SvmVirtualMachine {
             }
             System.err.println("\t SP.." + sp);
              */
-
             switch (instruction) {
             case NOP:
                 pc++;
@@ -218,128 +217,128 @@ public class SvmVirtualMachine {
                 pc++;
                 break;
             case EQ_INT:
-                this.stack[sp].intValue
+                this.stack[sp - 2].intValue
                     = (this.stack[sp - 2].intValue == this.stack[sp - 1].intValue) ? 1: 0;
                 sp--;
                 pc++;
                 break;
             case EQ_REAL:
-                this.stack[sp].intValue
+                this.stack[sp - 2].intValue
                     = (this.stack[sp - 2].realValue == this.stack[sp - 1].realValue) ? 1: 0;
                 sp--;
                 pc++;
                 break;
             case EQ_STRING:
-                this.stack[sp].intValue
+                this.stack[sp - 2].intValue
                      = (this.stack[sp - 2].stringValue.equals(this.stack[sp - 1].stringValue))
                         ? 1: 0;
                 sp--;
                 pc++;
                 break;
             case GT_INT:
-                this.stack[sp].intValue
+                this.stack[sp - 2].intValue
                     = (this.stack[sp - 2].intValue > this.stack[sp - 1].intValue) ? 1: 0;
                 sp--;
                 pc++;
                 break;
             case GT_REAL:
-                this.stack[sp].intValue
+                this.stack[sp - 2].intValue
                     = (this.stack[sp - 2].realValue > this.stack[sp - 1].realValue) ? 1: 0;
                 sp--;
                 pc++;
                 break;
             case GT_STRING:
-                this.stack[sp].intValue
+                this.stack[sp - 2].intValue
                     = ((this.stack[sp - 2].stringValue.
                         compareTo(this.stack[sp - 1].stringValue)) > 0) ? 1: 0;
                 sp--;
                 pc++;
                 break;
             case GE_INT:
-                this.stack[sp].intValue
+                this.stack[sp - 2].intValue
                     = (this.stack[sp - 2].intValue >= this.stack[sp - 1].intValue) ? 1: 0;
                 sp--;
                 pc++;
                 break;
             case GE_REAL:
-                this.stack[sp].intValue
+                this.stack[sp - 2].intValue
                     = (this.stack[sp - 2].realValue >= this.stack[sp - 1].realValue) ? 1: 0;
                 sp--;
                 pc++;
                 break;
             case GE_STRING:
-                this.stack[sp].intValue
+                this.stack[sp - 2].intValue
                     = ((this.stack[sp - 2].stringValue.
                         compareTo(this.stack[sp - 1].stringValue)) >= 0) ? 1: 0;
                 sp--;
                 pc++;
                 break;
             case LT_INT:
-                this.stack[sp].intValue
+                this.stack[sp - 2].intValue
                     = (this.stack[sp - 2].intValue < this.stack[sp - 1].intValue) ? 1: 0;
                 sp--;
                 pc++;
                 break;
             case LT_REAL:
-                this.stack[sp].intValue
+                this.stack[sp - 2].intValue
                     = (this.stack[sp - 2].realValue < this.stack[sp - 1].realValue) ? 1: 0;
                 sp--;
                 pc++;
                 break;
             case LT_STRING:
-                this.stack[sp].intValue
+                this.stack[sp - 2].intValue
                     = ((this.stack[sp - 2].stringValue.
                         compareTo(this.stack[sp - 1].stringValue)) < 0) ? 1: 0;
                 sp--;
                 pc++;
                 break;
             case LE_INT:
-                this.stack[sp].intValue
+                this.stack[sp - 2].intValue
                     = (this.stack[sp - 2].intValue <= this.stack[sp - 1].intValue) ? 1: 0;
                 sp--;
                 pc++;
                 break;
             case LE_REAL:
-                this.stack[sp].intValue
+                this.stack[sp - 2].intValue
                     = (this.stack[sp - 2].realValue <= this.stack[sp - 1].realValue) ? 1: 0;
                 sp--;
                 pc++;
                 break;
             case LE_STRING:
-                this.stack[sp].intValue
+                this.stack[sp - 2].intValue
                     = ((this.stack[sp - 2].stringValue.
                         compareTo(this.stack[sp - 1].stringValue)) <= 0) ? 1: 0;
                 sp--;
                 pc++;
                 break;
             case NE_INT:
-                this.stack[sp].intValue
+                this.stack[sp - 2].intValue
                     = (this.stack[sp - 2].intValue != this.stack[sp - 1].intValue) ? 1: 0;
                 sp--;
                 pc++;
                 break;
             case NE_REAL:
-                this.stack[sp].intValue
+                this.stack[sp - 2].intValue
                     = (this.stack[sp - 2].realValue != this.stack[sp - 1].realValue) ? 1: 0;
                 sp--;
                 pc++;
                 break;
             case NE_STRING:
-                this.stack[sp].intValue
+                this.stack[sp - 2].intValue
                      = (this.stack[sp - 2].stringValue.equals(this.stack[sp - 1].stringValue))
                         ? 0: 1;
                 sp--;
                 pc++;
                 break;
             case LOGICAL_AND:
-                this.stack[sp].intValue
+                this.stack[sp - 2].intValue
                     = ((this.stack[sp - 2].intValue != 0)
                        && (this.stack[sp - 1].intValue != 0)) ? 1: 0;
                 sp--;
                 pc++;
                 break;
             case LOGICAL_OR:
-                this.stack[sp].intValue
+                this.stack[sp - 2].intValue
                     = ((this.stack[sp - 2].intValue != 0)
                        || (this.stack[sp - 1].intValue != 0)) ? 1: 0;
                 sp--;
@@ -363,6 +362,7 @@ public class SvmVirtualMachine {
                 } else {
                     pc += 2;
                 }
+                sp--;
                 break;
             case JUMP_IF_FALSE:
                 if (this.stack[sp - 1].intValue == 0) {
@@ -370,6 +370,7 @@ public class SvmVirtualMachine {
                 } else {
                     pc += 2;
                 }
+                sp--;
                 break;
             case INVOKE:
                 {

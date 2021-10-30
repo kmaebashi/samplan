@@ -28,7 +28,7 @@ public class ErrorWriter {
     public static void write(int lineNumber, ErrorMessage err, Object... args) {
         String message = MessageFormat.format(messageTable.get(err), args);
         System.err.println("" + lineNumber + ":" + message);
-        throw new RuntimeException();
-        //System.exit(1);
+        //throw new RuntimeException();
+        System.exit(1);
     }
 }

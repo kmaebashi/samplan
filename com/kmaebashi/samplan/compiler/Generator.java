@@ -82,10 +82,9 @@ public class Generator {
     }
 
     private void generateExpressionStatement(OpCodeBuffer buf, ExpressionStatement es) {
-        if (es.expression instanceof BinaryExpression be) {
-            if (be.kind == BinaryExpressionKind.ASSIGNMENT) {
-                generateAssignmentExpression(buf, be, false);
-            }
+        if (es.expression instanceof BinaryExpression be
+            && be.kind == BinaryExpressionKind.ASSIGNMENT) {
+            generateAssignmentExpression(buf, be, false);
         } else if (es.expression instanceof UnaryExpression ue) {
             if (ue.kind == UnaryExpressionKind.INCREMENT
                 || ue.kind == UnaryExpressionKind.DECREMENT) {
@@ -206,12 +205,12 @@ public class Generator {
                 id = ie.declaration.id + SvmConstant.RETURN_INFO_SIZE;
             }
             if (ie.declaration.type == SvmType.INT) {
-                buf.generateCode(SvmOpCode.PUSH_STATIC_INT, id);
+                buf.generateCode(SvmOpCode.PUSH_STACK_INT, id);
             } else if (ie.declaration.type == SvmType.REAL) {
-                buf.generateCode(SvmOpCode.PUSH_STATIC_REAL, id);
+                buf.generateCode(SvmOpCode.PUSH_STACK_REAL, id);
             } else {
                 assert ie.declaration.type == SvmType.STRING;
-                buf.generateCode(SvmOpCode.PUSH_STATIC_STRING, id);
+                buf.generateCode(SvmOpCode.PUSH_STACK_STRING, id);
             }
         }
     }
@@ -406,6 +405,8 @@ public class Generator {
         buf.generateCode(SvmOpCode.JUMP_IF_FALSE, endLabel);
 
         generateBlock(buf, ws.block);
+
+        buf.generateCode(SvmOpCode.JUMP, loopLabel);
 
         buf.setLabel(endLabel);
     }

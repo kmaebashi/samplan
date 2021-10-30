@@ -9,7 +9,7 @@ public enum SvmOpCode {
     PUSH_STACK_INT(1),
     PUSH_STACK_REAL(1),
     PUSH_STACK_STRING(1),
-    POP_STACK_INT(0),
+    POP_STACK_INT(1),
     POP_STACK_REAL(1),
     POP_STACK_STRING(1),
     /**********/
