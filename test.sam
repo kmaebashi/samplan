@@ -72,21 +72,27 @@ print("assign1.." + assign1);
 print("assign2.." + assign2);
 print("assign3.." + assign3);
 
+print("比較演算子のテスト");
+
 if 3 = 2 {
   print("ここは通らない");
-} elsif 3 != 2 {
+}
+if 3 != 2 {
   print("ここは通る");
-} elsif 3 > 2 {
+}
+if 3 > 2 {
   print("ここは通る");
-} elsif 3 < 2 {
+}
+if 3 < 2 {
   print("ここは通らない");
-} elsif 3 >= 2 {
+}
+if 3 >= 2 {
   print("ここは通る");
-} elsif 3 <= 2 {
+}
+if 3 <= 2 {
   print("ここは通らない");
 }
 
-print("比較演算子のテスト");
 if 3 = 2.0 {
   print("ここは通らない");
 }
