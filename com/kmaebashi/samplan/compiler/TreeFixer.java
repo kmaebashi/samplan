@@ -126,7 +126,9 @@ public class TreeFixer {
             }
             fixBlock(eic.block);
         }
-        fixBlock(is.elseBlock);
+        if (is.elseBlock != null) {
+            fixBlock(is.elseBlock);
+        }
     }
 
     private void fixWhileStatement(Block currentBlock, WhileStatement ws) {
