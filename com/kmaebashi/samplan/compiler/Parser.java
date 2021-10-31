@@ -435,7 +435,14 @@ public class Parser {
     private ArrayList<Expression> parseArgumentList() throws Exception {
         ArrayList<Expression> ret = new ArrayList<Expression>();
         Token token;
+
         for (;;) {
+            token = getToken();
+            ungetToken(token);
+            if (token.type == TokenType.RIGHT_PAREN) {
+                break;
+            }
+
             Expression expr = parseExpression();
             ret.add(expr);
             

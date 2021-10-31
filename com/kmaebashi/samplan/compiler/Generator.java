@@ -35,8 +35,6 @@ public class Generator {
                                 this.functionList.toArray(new SvmFunction[0]),
                                 opCodeBuf.getOpCode());
 
-        executable.dump();
-
         return executable;
     }
 

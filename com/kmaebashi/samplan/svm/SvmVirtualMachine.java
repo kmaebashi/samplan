@@ -181,11 +181,11 @@ public class SvmVirtualMachine {
                 pc++;
                 break;
             case MINUS_INT:
-                this.stack[sp - 1].intValue = this.stack[sp - 1].intValue;
+                this.stack[sp - 1].intValue = -this.stack[sp - 1].intValue;
                 pc++;
                 break;
             case MINUS_REAL:
-                this.stack[sp - 1].realValue = this.stack[sp - 1].realValue;
+                this.stack[sp - 1].realValue = -this.stack[sp - 1].realValue;
                 pc++;
                 break;
             case INCREMENT:

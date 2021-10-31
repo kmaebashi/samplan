@@ -10,6 +10,7 @@ var result real := (hoge + piyo * 2) / 3 - (2 + 1);
 var str string := "なんとか";
 
 print("result.." + result);
+print("-result.." + -result);
 
 var addResult real := add(0.1, 0.2);
 print("addResult.." + addResult);
@@ -58,6 +59,8 @@ function sum(value int) int {
   }
 
   return sum;
+
+  print("ここは実行されない");
 }
 
 print("sum(10).." + sum(10));
@@ -78,16 +81,16 @@ if 3 = 2 {
   print("ここは通らない");
 }
 if 3 != 2 {
-  print("ここは通る");
+  print("ここは通る1");
 }
 if 3 > 2 {
-  print("ここは通る");
+  print("ここは通る2");
 }
 if 3 < 2 {
   print("ここは通らない");
 }
 if 3 >= 2 {
-  print("ここは通る");
+  print("ここは通る3");
 }
 if 3 <= 2 {
   print("ここは通らない");
@@ -97,24 +100,46 @@ if 3 = 2.0 {
   print("ここは通らない");
 }
 if 3.0 != 2.0 {
-  print("ここは通る");
+  print("ここは通る4");
 }
 if 3 > 2.0 {
-  print("ここは通る");
+  print("ここは通る5");
 }
 if 3 < 2.0 {
   print("ここは通らない");
 }
 if 3.0 >= 2 {
-  print("ここは通る");
+  print("ここは通る6");
 }
 if 3.0 <= 2 {
   print("ここは通らない");
 }
 
+if "abc" = "abc" {
+  print("ここは通る7");
+}
+if "abc" = "bcd" {
+  print("ここは通らない");
+}
+if "abc" != "bcd" {
+  print("ここは通る8");
+}
+if "abc" < "bcd" {
+  print("ここは通る9");
+}
+if "abc" > "bcd" {
+  print("ここは通らない");
+}
+if "abc" <= "bcd" {
+  print("ここは通る10");
+}
+if "abc" >= "bcd" {
+  print("ここは通らない");
+}
+
 print("&&のテスト");
 if 3 > 2 && 4 > 3 {
-  print("ここは通る");
+  print("ここは通る1");
 }
 if 3 > 2 && 4 < 3 {
   print("ここは通らない");
@@ -128,14 +153,42 @@ if 3 < 2 && 4 < 3 {
 
 print("||のテスト");
 if 3 > 2 || 4 > 3 {
-  print("ここは通る");
+  print("ここは通る1");
 }
 if 3 > 2 || 4 < 3 {
-  print("ここは通らない");
+  print("ここは通る2");
 }
 if 3 < 2 || 4 > 3 {
-  print("ここは通らない");
+  print("ここは通る3");
 }
 if 3 < 2 || 4 < 3 {
   print("ここは通らない");
 }
+
+var aa int := 0;
+if aa = 0 {
+  print("aは0だよ!");
+} elsif aa = 1 {
+  print("aは1だよ!");
+} else {
+  print("aは0でも1でもないよ!");
+}
+
+scope(0);
+
+function scope(arg int) {
+  var v1 int := 1;
+
+  if (true) {
+    var v2 int := 3;
+    print("v2.." + v2);
+  }
+
+  if (true) {
+    var v2 int := 5;
+    print("v2.." + v2);
+  }
+  return;
+  print("ここは実行されない");
+}
+
